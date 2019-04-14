@@ -17,6 +17,7 @@ public class CategoryTest {
         category = new Category();
     }
 
+    //validate setid and getid works correctly
     @Test
     public void getId() throws Exception {
         Long idValue = 4L;
