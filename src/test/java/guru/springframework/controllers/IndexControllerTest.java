@@ -4,6 +4,7 @@ import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
@@ -34,22 +35,32 @@ public class IndexControllerTest {
     @Test
     public void getIndexPage() {
 
+        //given
         Set<Recipe> recipes = new HashSet<>();
         recipes.add(new Recipe());
-
         when(recipeService.getRecipes()).thenReturn(recipes);
 
+        ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class); //model addAttribute method takes set of recipes as argument
+
+        //when
         String result = indexController.getIndexPage(model);
 
-        verify(recipeService, times(1)).getRecipes();
+
+        //then
+        verify(recipeService, times(1)).getRecipes(); //when getIndexPage is called, verify getRecipes is called once
 
         //verify(model, times(1)).addAttribute("recipes", recipeService.getRecipes());
 
-        verify(model, times(1)).addAttribute(eq("recipes"), anySet());
+        verify(model, times(1)).addAttribute(eq("recipes"), anySet()); //when getIndexPage is called, verify addAttribute is called once
+
+        //capture argument passed to model addattribute method. verify the addAttribute method is called exactly once.
+        verify(model, times(1)).addAttribute(eq("recipes"), captor.capture()); //capture the argument that is passed to addAttribute method
+
+        Set<Recipe> resultSet = captor.getValue();
+
+        assertEquals(1, resultSet.size()); //verify the argument size is 1 as expected
 
         assertEquals("index", result);
-
-
-
+        
     }
 }
